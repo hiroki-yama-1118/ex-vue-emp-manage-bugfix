@@ -4,6 +4,9 @@
       <form class="col s12" id="reg-form">
         <div class="row">
           <div class="input-field col s6">
+            <div class="error" v-show="errorLastNameMessage">
+              {{ errorLastNameMessageCom }}
+            </div>
             <input
               id="last_name"
               type="text"
@@ -14,6 +17,9 @@
             <label for="last_name">姓</label>
           </div>
           <div class="input-field col s6">
+            <div class="error" v-show="errorFirstNameMessage">
+              {{ errorFirstNameMessageCom }}
+            </div>
             <input
               id="first_name"
               type="text"
@@ -26,6 +32,9 @@
         </div>
         <div class="row">
           <div class="input-field col s12">
+            <div class="error" v-show="errorMailAddress">
+              {{ errorMailAddressCom }}
+            </div>
             <input
               id="email"
               type="email"
@@ -38,6 +47,9 @@
         </div>
         <div class="row">
           <div class="input-field col s12">
+            <div class="error" v-show="errorPassword">
+              {{ errorPasswordCom }}
+            </div>
             <input
               id="password"
               type="password"
@@ -84,6 +96,22 @@ export default class RegisterAdmin extends Vue {
   private mailAddress = "";
   // パスワード
   private password = "";
+  //姓のエラー
+  private errorLastNameMessage = false;
+  //姓のエラーメッセージ
+  private errorLastNameMessageCom = "";
+  //名のエラー
+  private errorFirstNameMessage = false;
+  //名のエラーメッセージ
+  private errorFirstNameMessageCom = "";
+  //メールアドレスのエラー
+  private errorMailAddress = false;
+  //メールアドレスのエラーメッセージ
+  private errorMailAddressCom = "";
+  //パスワードのエラー
+  private errorPassword = false;
+  //パスワードのエラーメッセージ
+  private errorPasswordCom = "";
 
   /**
    * 管理者情報を登録する.
@@ -100,8 +128,43 @@ export default class RegisterAdmin extends Vue {
       password: this.password,
     });
     console.dir("response:" + JSON.stringify(response));
+    if (
+      this.lastName !== "" &&
+      this.firstName !== "" &&
+      this.mailAddress !== "" &&
+      this.password !== ""
+    ) {
+      this.$router.push("/employeeList");
+    }
+    if (this.lastName == "") {
+      this.errorLastNameMessage = true;
+      this.errorLastNameMessageCom = "姓を入力してください";
+    }
+    if (this.lastName !== "") {
+      this.errorLastNameMessage = false;
+    }
 
-    this.$router.push("/employeeList");
+    if (this.firstName == "") {
+      this.errorFirstNameMessage = true;
+      this.errorFirstNameMessageCom = "名を入力してください";
+    }
+    if (this.firstName !== "") {
+      this.errorFirstNameMessage = false;
+    }
+    if (this.mailAddress == "") {
+      this.errorMailAddress = true;
+      this.errorMailAddressCom = "アドレスを入力してください";
+    }
+    if (this.mailAddress !== "") {
+      this.errorMailAddress = false;
+    }
+    if (this.password == "") {
+      this.errorPassword = true;
+      this.errorPasswordCom = "名を入力してください";
+    }
+    if (this.password !== "") {
+      this.errorPassword = false;
+    }
   }
 }
 </script>
@@ -109,5 +172,8 @@ export default class RegisterAdmin extends Vue {
 <style scoped>
 .register-page {
   width: 600px;
+}
+.error {
+  color: red;
 }
 </style>
