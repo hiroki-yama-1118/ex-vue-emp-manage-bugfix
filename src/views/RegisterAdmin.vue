@@ -2,6 +2,7 @@
   <div class="container">
     <div class="row register-page">
       <form class="col s12" id="reg-form">
+        <div class="error">{{ errorMessage }}</div>
         <div class="row">
           <div class="input-field col s6">
             <input
@@ -84,6 +85,7 @@ export default class RegisterAdmin extends Vue {
   private mailAddress = "";
   // パスワード
   private password = "";
+  private errorMessage = "";
 
   /**
    * 管理者情報を登録する.
@@ -101,7 +103,12 @@ export default class RegisterAdmin extends Vue {
     });
     console.dir("response:" + JSON.stringify(response));
 
-    this.$router.push("/loginAdmin");
+    if (response.data.status === "error") {
+      this.errorMessage = "登録できませんでした";
+      return;
+    } else {
+      this.$router.push("/loginAdmin");
+    }
   }
 }
 </script>
@@ -109,5 +116,8 @@ export default class RegisterAdmin extends Vue {
 <style scoped>
 .register-page {
   width: 600px;
+}
+.error {
+  color: red;
 }
 </style>
