@@ -121,21 +121,6 @@ export default class RegisterAdmin extends Vue {
    * @returns Promiseオブジェクト
    */
   async registerAdmin(): Promise<void> {
-    // 管理者登録処理
-    const response = await axios.post(`${config.EMP_WEBAPI_URL}/insert`, {
-      name: this.lastName + " " + this.firstName,
-      mailAddress: this.mailAddress,
-      password: this.password,
-    });
-    console.dir("response:" + JSON.stringify(response));
-    if (
-      this.lastName !== "" &&
-      this.firstName !== "" &&
-      this.mailAddress !== "" &&
-      this.password !== ""
-    ) {
-      this.$router.push("/employeeList");
-    }
     if (this.lastName == "") {
       this.errorLastNameMessage = true;
       this.errorLastNameMessageCom = "姓を入力してください";
@@ -165,6 +150,23 @@ export default class RegisterAdmin extends Vue {
     if (this.password !== "") {
       this.errorPassword = false;
     }
+
+    if (
+      this.errorLastNameMessage == false &&
+      this.errorFirstNameMessage == false &&
+      this.errorMailAddress == false &&
+      this.errorPassword == false
+    ) {
+      this.$router.push("/employeeList");
+    }
+
+    // 管理者登録処理
+    const response = await axios.post(`${config.EMP_WEBAPI_URL}/insert`, {
+      name: this.lastName + " " + this.firstName,
+      mailAddress: this.mailAddress,
+      password: this.password,
+    });
+    console.dir("response:" + JSON.stringify(response));
   }
 }
 </script>
@@ -175,5 +177,6 @@ export default class RegisterAdmin extends Vue {
 }
 .error {
   color: red;
+  text-align: center;
 }
 </style>
