@@ -32,6 +32,10 @@ export class Employee {
     private _dependentsCount: number
   ) {}
 
+  get salaryFormat(): string {
+    return this._salary.toLocaleString();
+  }
+
   public get id(): number {
     return this._id;
   }
