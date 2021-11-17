@@ -2,6 +2,7 @@
   <div class="container">
     <div class="row register-page">
       <form class="col s12" id="reg-form">
+        <div class="error">{{ errorMessage }}</div>
         <div class="row">
           <div class="input-field col s6">
             <div class="error" v-show="errorLastNameMessage">
@@ -112,6 +113,8 @@ export default class RegisterAdmin extends Vue {
   private errorPassword = false;
   //パスワードのエラーメッセージ
   private errorPasswordCom = "";
+  //ログインのエラーメッセージ
+  private errorMessage = "";
 
   /**
    * 管理者情報を登録する.
@@ -152,11 +155,13 @@ export default class RegisterAdmin extends Vue {
     }
 
     if (
-      this.errorLastNameMessage == false &&
-      this.errorFirstNameMessage == false &&
-      this.errorMailAddress == false &&
-      this.errorPassword == false
+      this.errorLastNameMessage == true ||
+      this.errorFirstNameMessage == true ||
+      this.errorMailAddress == true ||
+      this.errorPassword == true
     ) {
+      return;
+    } else {
       this.$router.push("/employeeList");
     }
 
@@ -167,6 +172,12 @@ export default class RegisterAdmin extends Vue {
       password: this.password,
     });
     console.dir("response:" + JSON.stringify(response));
+
+    if (response.data.status === "error") {
+      this.errorMessage = "登録できませんでした";
+    } else {
+      this.$router.push("/loginAdmin");
+    }
   }
 }
 </script>
