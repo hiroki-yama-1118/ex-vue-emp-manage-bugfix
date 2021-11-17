@@ -38,6 +38,7 @@
           </div>
         </div>
         <div class="row">
+          {{ errorMessagePass }}
           <div class="input-field col s12">
             <input
               id="password"
@@ -50,6 +51,20 @@
             <label for="password">パスワード</label>
           </div>
         </div>
+        <div class="row">
+          <div class="input-field col s12">
+            <input
+              id="repassword"
+              type="password"
+              class="validate"
+              minlength="8"
+              v-model="repassword"
+              required
+            />
+            <label for="repassword">確認用パスワード</label>
+          </div>
+        </div>
+
         <div class="row">
           <div class="input-field col s6">
             <button
@@ -85,7 +100,12 @@ export default class RegisterAdmin extends Vue {
   private mailAddress = "";
   // パスワード
   private password = "";
+  //確認用パスワード
+  private repassword = "";
+  //登録用エラーメッセージ
   private errorMessage = "";
+  //パスワード確認用エラーメッセージ
+  private errorMessagePass = "";
 
   /**
    * 管理者情報を登録する.
@@ -95,6 +115,11 @@ export default class RegisterAdmin extends Vue {
    * @returns Promiseオブジェクト
    */
   async registerAdmin(): Promise<void> {
+    if (this.password !== this.repassword) {
+      this.errorMessagePass = "パスワードが一致しません";
+    } else {
+      this.errorMessagePass = "";
+    }
     // 管理者登録処理
     const response = await axios.post(`${config.EMP_WEBAPI_URL}/insert`, {
       name: this.lastName + " " + this.firstName,
@@ -105,7 +130,6 @@ export default class RegisterAdmin extends Vue {
 
     if (response.data.status === "error") {
       this.errorMessage = "登録できませんでした";
-      return;
     } else {
       this.$router.push("/loginAdmin");
     }
