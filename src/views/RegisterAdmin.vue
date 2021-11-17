@@ -143,7 +143,6 @@ export default class RegisterAdmin extends Vue {
     if (this.lastName !== "") {
       this.errorLastNameMessage = false;
     }
-
     if (this.firstName == "") {
       this.errorFirstNameMessage = true;
       this.errorFirstNameMessageCom = "名を入力してください";
@@ -165,6 +164,7 @@ export default class RegisterAdmin extends Vue {
     if (this.password !== "") {
       this.errorPassword = false;
     }
+    this.$router.push("/loginAdmin");
   }
 }
 </script>
