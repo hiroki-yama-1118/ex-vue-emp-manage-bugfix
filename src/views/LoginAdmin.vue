@@ -7,6 +7,12 @@
           <div class="row">
             <div class="input-field col s12">
               <i class="material-icons prefix">mail_outline</i>
+              <div v-show="errorLogin" class="error">
+                {{ errorLoginCom }}
+              </div>
+              <div v-show="errorMailAddress" class="error">
+                {{ errorMailAddressCom }}
+              </div>
               <input
                 class="validate"
                 id="mailAddress"
@@ -21,6 +27,9 @@
           <div class="row">
             <div class="input-field col s12">
               <i class="material-icons prefix">lock_outline</i>
+              <div v-show="errorPassWord" class="error">
+                {{ errorPassWordCom }}
+              </div>
               <input id="password" type="password" v-model="password" />
               <label for="password">パスワード</label>
             </div>
@@ -65,6 +74,18 @@ export default class LoginAdmin extends Vue {
   private mailAddress = "";
   // パスワード
   private password = "";
+  //メールアドレスのエラー
+  private errorMailAddress = false;
+  //メールアドレスのエラーメッセージ
+  private errorMailAddressCom = "";
+  //パスワードのエラー
+  private errorPassWord = false;
+  //パスワードのエラーメッセージ
+  private errorPassWordCom = "";
+  //ログインのエラー
+  private errorLogin = false;
+  //ログインのエラーメッセージ
+  private errorLoginCom = "";
 
   /**
    * ログインする.
@@ -81,7 +102,21 @@ export default class LoginAdmin extends Vue {
     console.dir("response:" + JSON.stringify(response));
 
     // 従業員一覧に遷移する
-    this.$router.push("/employeeList");
+    if (response.data.status !== "error") {
+      this.$router.push("/employeeList");
+    }
+    if (response.data.status == "error") {
+      this.errorMailAddress = true;
+      this.errorMailAddressCom = "メールアドレスを入力してください";
+      this.errorPassWord = true;
+      this.errorPassWordCom = "パスワードを入力してください";
+      this.errorLogin = true;
+      this.errorLoginCom = "ログインできませんでした";
+    } else if (this.mailAddress !== "") {
+      this.errorMailAddress = false;
+    } else if (this.password !== "") {
+      this.errorMailAddress = false;
+    }
   }
 }
 </script>
@@ -89,5 +124,9 @@ export default class LoginAdmin extends Vue {
 <style scoped>
 .login-page {
   width: 600px;
+}
+.error {
+  color: red;
+  text-align: center;
 }
 </style>
