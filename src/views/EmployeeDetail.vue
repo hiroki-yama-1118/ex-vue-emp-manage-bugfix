@@ -36,7 +36,7 @@
             </tr>
             <tr>
               <th nowrap>入社日</th>
-              <td>{{ urrentEmployee.hireDate }}</td>
+              <td>{{ currentEmployee.hireDate }}</td>
             </tr>
             <tr>
               <th nowrap>メールアドレス</th>
