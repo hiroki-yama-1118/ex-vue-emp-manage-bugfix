@@ -47,6 +47,7 @@
           </div>
         </div>
         <div class="row">
+          {{ errorMessagePass }}
           <div class="input-field col s12">
             <div class="error" v-show="errorPassword">
               {{ errorPasswordCom }}
@@ -62,6 +63,20 @@
             <label for="password">パスワード</label>
           </div>
         </div>
+        <div class="row">
+          <div class="input-field col s12">
+            <input
+              id="repassword"
+              type="password"
+              class="validate"
+              minlength="8"
+              v-model="repassword"
+              required
+            />
+            <label for="repassword">確認用パスワード</label>
+          </div>
+        </div>
+
         <div class="row">
           <div class="input-field col s6">
             <button
@@ -97,6 +112,10 @@ export default class RegisterAdmin extends Vue {
   private mailAddress = "";
   // パスワード
   private password = "";
+  //確認用パスワード
+  private repassword = "";
+  //確認用パスワードのエラー
+  private errorRepassword = false;
   //姓のエラー
   private errorLastNameMessage = false;
   //姓のエラーメッセージ
@@ -113,8 +132,10 @@ export default class RegisterAdmin extends Vue {
   private errorPassword = false;
   //パスワードのエラーメッセージ
   private errorPasswordCom = "";
-  //ログインのエラーメッセージ
+  //登録用エラーメッセージ
   private errorMessage = "";
+  //パスワード確認用エラーメッセージ
+  private errorMessagePass = "";
 
   /**
    * 管理者情報を登録する.
@@ -124,6 +145,14 @@ export default class RegisterAdmin extends Vue {
    * @returns Promiseオブジェクト
    */
   async registerAdmin(): Promise<void> {
+    if (this.password !== this.repassword) {
+      this.errorRepassword = true;
+      this.errorMessagePass = "パスワードが一致しません";
+    } else {
+      this.errorRepassword = false;
+      this.errorMessagePass = "";
+    }
+
     if (this.lastName == "") {
       this.errorLastNameMessage = true;
       this.errorLastNameMessageCom = "姓を入力してください";
@@ -158,7 +187,8 @@ export default class RegisterAdmin extends Vue {
       this.errorLastNameMessage == true ||
       this.errorFirstNameMessage == true ||
       this.errorMailAddress == true ||
-      this.errorPassword == true
+      this.errorPassword == true ||
+      this.errorRepassword == true
     ) {
       return;
     } else {

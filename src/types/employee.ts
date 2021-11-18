@@ -33,13 +33,13 @@ export class Employee {
     private _dependentsCount: number
   ) {}
 
+
+
   get salaryFormat(): string {
     return this._salary.toLocaleString();
   }
+  
   get dateFormat(): string {
-    /**
-     * 日付のフォーマットを日本語に変換
-     */
     const formatHireDate = new Date(this._hireDate);
     return format(formatHireDate, "yyyy年MM月dd日");
   }
