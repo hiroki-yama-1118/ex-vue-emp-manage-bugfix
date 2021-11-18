@@ -5,7 +5,7 @@
         <div class="error">{{ errorMessage }}</div>
         <div class="row">
           <div class="input-field col s6">
-            <div class="error" v-show="errorLastNameMessage">
+            <div class="error">
               {{ errorLastNameMessageCom }}
             </div>
             <input
@@ -18,8 +18,8 @@
             <label for="last_name">姓</label>
           </div>
           <div class="input-field col s6">
-            <div class="error" v-show="errorFirstNameMessage">
-              {{ errorFirstNameMessageCom }}
+            <div class="error">
+              {{ errorLastNameMessageCom }}
             </div>
             <input
               id="first_name"
@@ -33,7 +33,7 @@
         </div>
         <div class="row">
           <div class="input-field col s12">
-            <div class="error" v-show="errorMailAddress">
+            <div class="error">
               {{ errorMailAddressCom }}
             </div>
             <input
@@ -47,9 +47,8 @@
           </div>
         </div>
         <div class="row">
-          {{ errorMessagePass }}
           <div class="input-field col s12">
-            <div class="error" v-show="errorPassword">
+            <div class="error">
               {{ errorPasswordCom }}
             </div>
             <input
@@ -63,18 +62,20 @@
             <label for="password">パスワード</label>
           </div>
         </div>
-        <div class="row">
-          <div class="input-field col s12">
-            <input
-              id="repassword"
-              type="password"
-              class="validate"
-              minlength="8"
-              v-model="repassword"
-              required
-            />
-            <label for="repassword">確認用パスワード</label>
+
+        <div class="input-field col s12">
+          <div class="error">
+            {{ errorRePasswordCom }}
           </div>
+          <input
+            id="repassword"
+            type="password"
+            class="validate"
+            minlength="8"
+            v-model="repassword"
+            required
+          />
+          <label for="password">確認用パスワード</label>
         </div>
 
         <div class="row">
@@ -112,30 +113,18 @@ export default class RegisterAdmin extends Vue {
   private mailAddress = "";
   // パスワード
   private password = "";
-  //確認用パスワード
+  // パスワード
   private repassword = "";
-  //確認用パスワードのエラー
-  private errorRepassword = false;
-  //姓のエラー
-  private errorLastNameMessage = false;
   //姓のエラーメッセージ
   private errorLastNameMessageCom = "";
-  //名のエラー
-  private errorFirstNameMessage = false;
-  //名のエラーメッセージ
-  private errorFirstNameMessageCom = "";
-  //メールアドレスのエラー
-  private errorMailAddress = false;
   //メールアドレスのエラーメッセージ
   private errorMailAddressCom = "";
-  //パスワードのエラー
-  private errorPassword = false;
   //パスワードのエラーメッセージ
   private errorPasswordCom = "";
-  //登録用エラーメッセージ
+  //確認用パスワードのエラーメッセージ
+  private errorRePasswordCom = "";
+  //ログインのエラーメッセージ
   private errorMessage = "";
-  //パスワード確認用エラーメッセージ
-  private errorMessagePass = "";
 
   /**
    * 管理者情報を登録する.
@@ -145,55 +134,27 @@ export default class RegisterAdmin extends Vue {
    * @returns Promiseオブジェクト
    */
   async registerAdmin(): Promise<void> {
-    if (this.password !== this.repassword) {
-      this.errorRepassword = true;
-      this.errorMessagePass = "パスワードが一致しません";
-    } else {
-      this.errorRepassword = false;
-      this.errorMessagePass = "";
-    }
+    let hasError = false;
 
-    if (this.lastName == "") {
-      this.errorLastNameMessage = true;
-      this.errorLastNameMessageCom = "姓を入力してください";
+    if (this.lastName === "" || this.firstName === "") {
+      this.errorLastNameMessageCom = "姓または名を入力してください";
+      hasError = true;
     }
-    if (this.lastName !== "") {
-      this.errorLastNameMessage = false;
-    }
-
-    if (this.firstName == "") {
-      this.errorFirstNameMessage = true;
-      this.errorFirstNameMessageCom = "名を入力してください";
-    }
-    if (this.firstName !== "") {
-      this.errorFirstNameMessage = false;
-    }
-    if (this.mailAddress == "") {
-      this.errorMailAddress = true;
+    if (this.mailAddress === "") {
       this.errorMailAddressCom = "アドレスを入力してください";
+      hasError = true;
     }
-    if (this.mailAddress !== "") {
-      this.errorMailAddress = false;
+    if (this.password === "") {
+      this.errorPasswordCom = "パスワードを入力してください";
+      hasError = true;
+    } else if (this.password !== this.repassword) {
+      this.errorRePasswordCom = "パスワードが不一致です";
+      hasError = true;
     }
-    if (this.password == "") {
-      this.errorPassword = true;
-      this.errorPasswordCom = "名を入力してください";
-    }
-    if (this.password !== "") {
-      this.errorPassword = false;
-    }
-
-    if (
-      this.errorLastNameMessage == true ||
-      this.errorFirstNameMessage == true ||
-      this.errorMailAddress == true ||
-      this.errorPassword == true ||
-      this.errorRepassword == true
-    ) {
+    if (hasError == true) {
       return;
-    } else {
-      this.$router.push("/employeeList");
     }
+    this.$router.push("/employeeList");
 
     // 管理者登録処理
     const response = await axios.post(`${config.EMP_WEBAPI_URL}/insert`, {
