@@ -5,6 +5,9 @@
         <div class="error">{{ errorMessage }}</div>
         <div class="row">
           <div class="input-field col s6">
+            <div class="error" v-show="errorLastNameMessage">
+              {{ errorLastNameMessageCom }}
+            </div>
             <input
               id="last_name"
               type="text"
@@ -15,6 +18,9 @@
             <label for="last_name">姓</label>
           </div>
           <div class="input-field col s6">
+            <div class="error" v-show="errorFirstNameMessage">
+              {{ errorFirstNameMessageCom }}
+            </div>
             <input
               id="first_name"
               type="text"
@@ -27,6 +33,9 @@
         </div>
         <div class="row">
           <div class="input-field col s12">
+            <div class="error" v-show="errorMailAddress">
+              {{ errorMailAddressCom }}
+            </div>
             <input
               id="email"
               type="email"
@@ -39,6 +48,9 @@
         </div>
         <div class="row">
           <div class="input-field col s12">
+            <div class="error" v-show="errorPassword">
+              {{ errorPasswordCom }}
+            </div>
             <input
               id="password"
               type="password"
@@ -85,6 +97,23 @@ export default class RegisterAdmin extends Vue {
   private mailAddress = "";
   // パスワード
   private password = "";
+  //姓のエラー
+  private errorLastNameMessage = false;
+  //姓のエラーメッセージ
+  private errorLastNameMessageCom = "";
+  //名のエラー
+  private errorFirstNameMessage = false;
+  //名のエラーメッセージ
+  private errorFirstNameMessageCom = "";
+  //メールアドレスのエラー
+  private errorMailAddress = false;
+  //メールアドレスのエラーメッセージ
+  private errorMailAddressCom = "";
+  //パスワードのエラー
+  private errorPassword = false;
+  //パスワードのエラーメッセージ
+  private errorPasswordCom = "";
+  //ログインのエラーメッセージ
   private errorMessage = "";
 
   /**
@@ -95,6 +124,47 @@ export default class RegisterAdmin extends Vue {
    * @returns Promiseオブジェクト
    */
   async registerAdmin(): Promise<void> {
+    if (this.lastName == "") {
+      this.errorLastNameMessage = true;
+      this.errorLastNameMessageCom = "姓を入力してください";
+    }
+    if (this.lastName !== "") {
+      this.errorLastNameMessage = false;
+    }
+
+    if (this.firstName == "") {
+      this.errorFirstNameMessage = true;
+      this.errorFirstNameMessageCom = "名を入力してください";
+    }
+    if (this.firstName !== "") {
+      this.errorFirstNameMessage = false;
+    }
+    if (this.mailAddress == "") {
+      this.errorMailAddress = true;
+      this.errorMailAddressCom = "アドレスを入力してください";
+    }
+    if (this.mailAddress !== "") {
+      this.errorMailAddress = false;
+    }
+    if (this.password == "") {
+      this.errorPassword = true;
+      this.errorPasswordCom = "名を入力してください";
+    }
+    if (this.password !== "") {
+      this.errorPassword = false;
+    }
+
+    if (
+      this.errorLastNameMessage == true ||
+      this.errorFirstNameMessage == true ||
+      this.errorMailAddress == true ||
+      this.errorPassword == true
+    ) {
+      return;
+    } else {
+      this.$router.push("/employeeList");
+    }
+
     // 管理者登録処理
     const response = await axios.post(`${config.EMP_WEBAPI_URL}/insert`, {
       name: this.lastName + " " + this.firstName,
@@ -105,7 +175,6 @@ export default class RegisterAdmin extends Vue {
 
     if (response.data.status === "error") {
       this.errorMessage = "登録できませんでした";
-      return;
     } else {
       this.$router.push("/loginAdmin");
     }
@@ -119,5 +188,6 @@ export default class RegisterAdmin extends Vue {
 }
 .error {
   color: red;
+  text-align: center;
 }
 </style>
