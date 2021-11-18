@@ -78,6 +78,20 @@
           <label for="password">確認用パスワード</label>
         </div>
 
+        <input
+          type="text"
+          id="zipCode"
+          v-model="zipCode"
+          placeholder="郵便番号"
+        />
+        <label for="zipeCode"> 郵便番号</label>
+        <button type="button" v-on:click="searchAddress">検索</button>
+
+        <input type="text" id="state_name" v-model="state_name" />
+        <label for="state_name"> 都道府県</label>
+        <input type="text" id="address" v-model="address" />
+        <label for="address"> 住所</label>
+
         <div class="row">
           <div class="input-field col s6">
             <button
@@ -125,6 +139,12 @@ export default class RegisterAdmin extends Vue {
   private errorRePasswordCom = "";
   //ログインのエラーメッセージ
   private errorMessage = "";
+  //郵便番号
+  private zipCode = "";
+  //住所
+  private address = "";
+  //都道府県
+  private state_name = "";
 
   /**
    * 管理者情報を登録する.
@@ -169,6 +189,20 @@ export default class RegisterAdmin extends Vue {
     } else {
       this.$router.push("/loginAdmin");
     }
+  }
+  async searchAddress(): Promise<void> {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const axiosJsonpAdapter = require("axios-jsonp");
+
+    const response = await axios.get("https://zipcoda.net/api", {
+      adapter: axiosJsonpAdapter,
+      params: {
+        zipcode: this.zipCode,
+      },
+    });
+    console.dir(JSON.stringify(response));
+    this.address = response.data.items[0].address;
+    this.state_name = response.data.items[0].state_name;
   }
 }
 </script>
